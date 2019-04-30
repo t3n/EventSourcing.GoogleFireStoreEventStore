@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace t3n\EventSourcing\GoogleFireStoreEventStore;
 
 use Google\Cloud\Core\Exception\GoogleException;
@@ -29,7 +31,7 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
     private $baseDocumentId = 'default';
 
     /**
-     * @var array
+     * @var mixed[]
      */
     private $fireStoreConfig = [];
 
@@ -38,6 +40,9 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
      */
     private $baseDocumentCache;
 
+    /**
+     * @param mixed[] $options
+     */
     public function __construct(array $options)
     {
         if (array_key_exists('baseCollectionName', $options)) {
@@ -57,13 +62,13 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
         $events = $baseDocument->collection('events');
         $query = $events->orderBy('sequenceNumber');
 
-        if (!$streamName->isVirtualStream()) {
-            $query = $query->where('stream', '=', (string)$streamName);
+        if (! $streamName->isVirtualStream()) {
+            $query = $query->where('stream', '=', (string) $streamName);
         } elseif ($streamName->isCategoryStream()) {
             $query = $query
                 ->where('stream', '>', $streamName->getCategoryName())
                 ->where('stream', '<=', $streamName->getCategoryName() . chr(127));
-        } elseif (!$streamName->isAllStream()) {
+        } elseif (! $streamName->isAllStream()) {
             throw new \InvalidArgumentException(sprintf('Unsupported virtual stream name "%s"', $streamName), 1551440062);
         }
         if ($minimumSequenceNumber > 0) {
@@ -71,7 +76,6 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
         }
         return new EventStream($streamName, new EventStreamIterator($query));
     }
-
 
     public function commit(StreamName $streamName, WritableEvents $events, int $expectedVersion = ExpectedVersion::ANY): void
     {
@@ -83,7 +87,7 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
         $streamVersionDocument = $streamsCollection->document($streamName);
         $allVersionDocument = $streamsCollection->document('all');
 
-        $firestore->runTransaction(function() use ($eventsCollection, $streamVersionDocument, $allVersionDocument, $streamName, $events, $expectedVersion) {
+        $firestore->runTransaction(function () use ($eventsCollection, $streamVersionDocument, $allVersionDocument, $streamName, $events, $expectedVersion): void {
             $streamVersion = $this->getVersion($streamVersionDocument);
             if ($expectedVersion !== ExpectedVersion::ANY && $expectedVersion !== $streamVersion) {
                 throw new ConcurrencyException(sprintf('Expected version <b>%s</b>, but have <b>%s</b> on stream "%s"', $expectedVersion, $streamVersion, $streamName), 1551207397);
@@ -96,7 +100,7 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
                 $causationId = $event->getMetadata()['causationIdentifier'] ?? null;
                 $eventDocument->create([
                     'sequenceNumber' => $allVersionNumber + 2,
-                    'stream' => (string)$streamName,
+                    'stream' => (string) $streamName,
                     'version' => $streamVersion + 1,
                     'type' => $event->getType(),
                     'payload' => json_encode($event->getData()),
@@ -111,12 +115,10 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
         });
     }
 
-
     public function getStatus(): Result
     {
         return $this->setup();
     }
-
 
     public function setup(): Result
     {
@@ -166,10 +168,10 @@ final class GoogleFireStoreEventStorage implements EventStorageInterface
     private function getVersion(DocumentReference $documentReference): int
     {
         $versionSnapshot = $documentReference->snapshot();
-        if (!$versionSnapshot->exists()) {
+        if (! $versionSnapshot->exists()) {
             return -1;
         }
-        return (int)$versionSnapshot->get('version');
+        return (int) $versionSnapshot->get('version');
     }
 
     private function increaseVersion(DocumentReference $documentReference, int $currentVersion): void
