@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace t3n\EventSourcing\GoogleFireStoreEventStore;
 
 use Google\Cloud\Core\Timestamp;
@@ -14,11 +16,8 @@ use Neos\Flow\Annotations as Flow;
  */
 final class EventStreamIterator implements EventStreamIteratorInterface
 {
-
     /**
      * The number of documents to fetch per batch
-     *
-     * @var int
      */
     private const BATCH_SIZE = 100;
 
@@ -51,13 +50,13 @@ final class EventStreamIterator implements EventStreamIteratorInterface
         $payload = json_decode($data['payload'], true);
         $metadata = json_decode($data['metadata'], true);
         return new RawEvent(
-            (int)$data['sequenceNumber'],
+            (int) $data['sequenceNumber'],
             $data['type'],
             $payload,
             $metadata,
             StreamName::fromString($data['stream']),
-            (int)$data['version'],
-            (string)$data->id(),
+            (int) $data['version'],
+            (string) $data->id(),
             $recordedAtTimestamp->get()
         );
     }
@@ -96,8 +95,6 @@ final class EventStreamIterator implements EventStreamIteratorInterface
 
     /**
      * Fetches a batch of maximum BATCH_SIZE records
-     *
-     * @return void
      */
     private function fetchBatch(): void
     {
