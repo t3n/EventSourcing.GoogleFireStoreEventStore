@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/t3n/EventSourcing.GoogleFireStoreEventStore.svg?style=svg)](https://circleci.com/gh/t3n/EventSourcing.GoogleFireStoreEventStore) [![Latest Stable Version](https://poser.pugx.org/t3n/eventsourcing-googlefirestoreeventstore/v/stable)](https://packagist.org/packages/t3n/eventsourcing-googlefirestoreeventstore) [![Total Downloads](https://poser.pugx.org/t3n/eventsourcing-googlefirestoreeventstore/downloads)](https://packagist.org/packages/t3n/eventsourcing-googlefirestoreeventstore)
+
 # t3n.EventSourcing.GoogleFireStoreEventStore
 
 [Neos.EventSourcing](https://github.com/neos/Neos.EventSourcing) adapter for the [Google Cloud Firestore](https://cloud.google.com/firestore/)
