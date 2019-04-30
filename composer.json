@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "ext-json": "*",
-        "php-grpc": "*",
+        "ext-grpc": "*",
         "neos/flow": "^5.2",
         "neos/event-sourcing": "^1.0",
         "google/cloud-firestore": "^1.1"
