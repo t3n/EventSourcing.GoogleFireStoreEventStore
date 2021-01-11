@@ -7,7 +7,7 @@
         "ext-json": "*",
         "ext-grpc": "*",
         "neos/flow": "^5.2",
-        "neos/event-sourcing": "^1.0",
+        "neos/event-sourcing": "^2.3",
         "google/cloud-firestore": "^1.1"
     },
     "require-dev": {
